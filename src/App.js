@@ -12,7 +12,9 @@ import Particles from 'react-particles-js';
 const initialState = {
   input: '',
   imageURL:'',
-  box:{},
+  box:[],
+  amount: 0,
+  hit:false,
   route:'signIn',
   isSignedIn: false,
   user:{
@@ -41,19 +43,30 @@ class App extends Component {
     }})
   }
   calculateFaceLocation = (data) =>{
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
     const image = document.getElementById('inputImage')
     const width = Number(image.width);
     const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
+    const faces = data.outputs[0].data.regions
+    if(faces){
+      return faces.map(face=>{
+        const foundFace = face.region_info.bounding_box;
+        return{
+          leftCol: foundFace.left_col * width,
+          topRow: foundFace.top_row * height,
+          rightCol: width - (foundFace.right_col * width),
+          bottomRow: height - (foundFace.bottom_row * height)
+        }
+      })
+    }
+    else{
+      return null
     }
   }
   displayFaceBox = (box) =>{
-    this.setState({box:box})
+    if(box){
+      this.setState({box:box, amount:box.length, hit:true})
+    }
+    else this.setState({box:null, hit:true})
   }
   onInputChange = (e) =>{
     this.setState({input:e.target.value})
@@ -74,7 +87,7 @@ class App extends Component {
             method:'put',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-            id:this.state.user.id
+            id:this.state.user.id,
           })
         })
         .then(response => response.json())
@@ -96,6 +109,7 @@ class App extends Component {
     this.setState({route:route})
   }
   render(){
+    console.log(this.state.amount)
     const {isSignedIn, imageURL, route, box} = this.state;
     const {onButtonSubmit, onInputChange, onRouteChange} = this
     return (
@@ -105,9 +119,9 @@ class App extends Component {
           {route === 'home' ? 
           <div>
           <Logo/>
-          <Entries name={this.state.user.name} entries={this.state.user.entries}/>
-          <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit}/>
-          <FaceRecognition imageURL={imageURL} box={box}/>
+          <Entries name={this.state.user.name} entries={this.state.user.entries} />
+          <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} amount={this.state.amount} hit={this.state.hit} box={box}/>
+          <FaceRecognition imageURL={imageURL} box={box} amount={this.state.amount}/>
           </div>
           :
           (

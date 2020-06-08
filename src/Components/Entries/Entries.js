@@ -1,14 +1,11 @@
 import React from 'react';
 
-const entries = ({name, entries}) =>{
+const entries = ({name, entries, amount}) =>{
   return(
     <div>
-      <div className='white f3'>
-      {`${name}, your current entry count is...`}
+      <div className='white f3' style={{paddingBottom:'20px'}}>
+      {`Hey ${name}! You have checked ${entries} images for faces!`}
     </div>
-      <div className='white f1'>
-        {entries}
-      </div>
     </div>
   )
 }
