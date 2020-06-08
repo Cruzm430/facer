@@ -6,7 +6,8 @@ class Register extends React.Component{
     this.state={
       email: '',
       password:'',
-      name:''
+      name:'',
+      error:''
     }
   }
   onNameChange = (e) => {
@@ -19,26 +20,45 @@ class Register extends React.Component{
     this.setState({password:e.target.value})
   }
   onSubmitSignIn = () => {
-    fetch('https://evening-woodland-89554.herokuapp.com/register', {
-      method:'post',
-      headers:{'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-        name:this.state.name
+    const {email, password, name} = this.state
+    if(!name){
+      this.setState({error:`Your name is Blank?!`})
+    }
+    else if(!email || !email.includes('@') || !email.includes('.com')){
+      this.setState({error:`That's not an email!`})
+    }
+    else if(!password){
+      this.setState({error:`That's not a password!`})
+    }
+    else{
+      fetch('https://evening-woodland-89554.herokuapp.com/register', {
+        method:'post',
+        headers:{'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          name:name
+        })
       })
-    })
-    .then(response => response.json())
-    .then(user => {
-      if(user.id){
-        this.props.loadUser(user)
-        this.props.onRouteChange('home');
-      }
-    })
+      .then(response => response.json())
+      .then(user => {
+        if(user.id){
+          this.props.loadUser(user)
+          this.props.onRouteChange('home');
+        }
+        else{
+          this.setState({error:`Looks like you have an account already, Sign in!`})
+        }
+      })
+      
+    }
   }
   render(){
     return (
-      <article className='br3 ba b--black-10 mv4 w-100 w50-m 2-25-1 mw5 center shadow-5'>
+      <div>
+        No account, huh? No problem, sign up below!
+        {this.state.error ? <div className='white f3 pa2'>{this.state.error}</div>:''}
+        <article className='br3 ba b--black-10 mv4 w-100 w50-m 2-25-1 mw5 center shadow-5'>
         <main className='pa4 black-80'>
           <div className='measure'>
             <fieldset id='sign_up' className='ba b--transparent ph0 mh0'>
@@ -64,6 +84,7 @@ class Register extends React.Component{
           </div>
         </main>
       </article>
+      </div>
     )
   }
 }

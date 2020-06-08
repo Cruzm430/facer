@@ -5,7 +5,8 @@ class SignIn extends React.Component{
     super();
     this.state = {
       signInEmail: '',
-      signInPassword: ''
+      signInPassword: '',
+      error:''
     }
   }
   onEmailChange = (e) =>{
@@ -15,7 +16,14 @@ class SignIn extends React.Component{
     this.setState({signInPassword: e.target.value})
   }
   onSubmitSignIn = () => {
-    if(this.state.signInEmail !== ''){
+    const {signInEmail, signInPassword} = this.state
+    if(!signInEmail || !signInEmail.includes('@') || !signInEmail.includes('.com')){
+      this.setState({error:`That's not an email!`})
+    }
+    else if(!signInPassword){
+      this.setState({error:`That's not a password!`})
+    }
+    else{
       fetch('https://evening-woodland-89554.herokuapp.com/signin', {
         method:'post',
         headers:{'Content-Type': 'application/json'},
@@ -30,6 +38,9 @@ class SignIn extends React.Component{
           this.props.loadUser(user)
           this.props.onRouteChange('home')
         }
+        else{
+          this.setState({error:`That didn't work, let's try again?`})
+        }
       })
     }
   }
@@ -43,6 +54,7 @@ class SignIn extends React.Component{
         An app that locates faces in an image URL!
         <br/> 
         Please sign in or create an account to use the application
+        {this.state.error ? <div className='white f3 pa2'>{this.state.error}</div>:''}
         <article className='br3 ba b--black-10 mv4 w-100 w50-m 2-25-1 mw5 center shadow-5'>
           <main className='pa4 black-80'>
             <div className='measure'>
