@@ -18,10 +18,10 @@ class SignIn extends React.Component{
   onSubmitSignIn = () => {
     const {signInEmail, signInPassword} = this.state
     if(!signInEmail || !signInEmail.includes('@') || !signInEmail.includes('.com')){
-      this.setState({error:`That's not an email!`})
+      this.setState({error:`Please enter a valid email`})
     }
     else if(!signInPassword){
-      this.setState({error:`That's not a password!`})
+      this.setState({error:`The password is left blank`})
     }
     else{
       fetch('https://evening-woodland-89554.herokuapp.com/signin', {

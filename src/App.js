@@ -109,8 +109,7 @@ class App extends Component {
     this.setState({route:route})
   }
   render(){
-    console.log(this.state.amount)
-    const {isSignedIn, imageURL, route, box} = this.state;
+    const {isSignedIn, imageURL, route, box, entries, name, hit, amount} = this.state;
     const {onButtonSubmit, onInputChange, onRouteChange} = this
     return (
       <div className="App">
@@ -119,9 +118,9 @@ class App extends Component {
           {route === 'home' ? 
           <div>
           <Logo/>
-          <Entries name={this.state.user.name} entries={this.state.user.entries} />
-          <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} amount={this.state.amount} hit={this.state.hit} box={box}/>
-          <FaceRecognition imageURL={imageURL} box={box} amount={this.state.amount}/>
+          <Entries name={name} entries={entries} />
+          <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} amount={amount} hit={hit} box={box}/>
+          <FaceRecognition imageURL={imageURL} box={box} amount={amount}/>
           </div>
           :
           (

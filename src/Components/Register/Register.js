@@ -22,13 +22,13 @@ class Register extends React.Component{
   onSubmitSignIn = () => {
     const {email, password, name} = this.state
     if(!name){
-      this.setState({error:`Your name is Blank?!`})
+      this.setState({error:`Please enter your name`})
     }
     else if(!email || !email.includes('@') || !email.includes('.com')){
-      this.setState({error:`That's not an email!`})
+      this.setState({error:`Please enter a valid email`})
     }
     else if(!password){
-      this.setState({error:`That's not a password!`})
+      this.setState({error:`Please enter a valid password`})
     }
     else{
       fetch('https://evening-woodland-89554.herokuapp.com/register', {
